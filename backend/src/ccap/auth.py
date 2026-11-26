@@ -69,6 +69,9 @@ async def login(provider: LoginProvider, request: Request) -> Response:
 
 @router.get("/{provider}/callback")
 async def callback(provider: LoginProvider, request: Request, db: DbSession) -> Response:
+    # El proveedor devuelve "error" si la persona canceló: no es un ataque, vuelve a la PWA.
+    if "error" in request.query_params:
+        return RedirectResponse(f"{settings.app_url}/?login=cancelled", status.HTTP_303_SEE_OTHER)
     # authlib valida state (atado a este navegador), PKCE, y firma, iss, aud, exp y nonce
     # del ID token (STRIDE S-01).
     try:

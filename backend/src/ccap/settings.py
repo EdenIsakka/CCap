@@ -1,6 +1,6 @@
 from functools import cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +22,12 @@ class Settings(DatabaseSettings):
     allowed_emails: str = ""
     google_client_id: str = Field(min_length=1)
     google_client_secret: str = Field(min_length=1)
+
+    @field_validator("app_url")
+    @classmethod
+    def _strip_trailing_slash(cls, value: str) -> str:
+        # Con "/" al final, el redirect URI tendría "//" y Google lo rechazaría.
+        return value.rstrip("/")
 
     def is_email_allowed(self, email: str) -> bool:
         allowed = {e.strip().lower() for e in self.allowed_emails.split(",") if e.strip()}

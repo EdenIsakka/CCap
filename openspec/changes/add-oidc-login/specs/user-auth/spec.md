@@ -39,6 +39,10 @@ El sistema MUST rechazar el callback si el `state` no coincide con el del navega
 - **WHEN** el callback llega a un navegador que no inició el login
 - **THEN** el sistema responde 400 y no crea sesión
 
+#### Scenario: Login cancelado en el proveedor
+- **WHEN** el proveedor vuelve al callback con un error, por ejemplo porque la persona canceló el consentimiento
+- **THEN** el sistema no crea sesión y redirige a la PWA indicando que el login se canceló
+
 #### Scenario: ID token con audiencia ajena
 - **WHEN** el ID token trae una audiencia distinta del client ID de CCap
 - **THEN** el sistema responde con error y no crea sesión

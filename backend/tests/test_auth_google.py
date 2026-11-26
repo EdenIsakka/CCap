@@ -145,6 +145,21 @@ async def test_callback_with_other_state_is_rejected(
     assert await count(db, LoginSession) == 0
 
 
+async def test_cancelled_login_returns_to_pwa_without_session(
+    client: httpx2.AsyncClient, google: FakeGoogle, db: AsyncSession
+) -> None:
+    params = await start_login(client)
+
+    response = await client.get(
+        "/api/auth/google/callback",
+        params={"error": "access_denied", "state": params["state"]},
+    )
+
+    assert response.status_code == 303
+    assert response.headers["location"] == f"{APP_URL}/?login=cancelled"
+    assert await count(db, LoginSession) == 0
+
+
 async def test_callback_without_previous_login_is_rejected(
     client: httpx2.AsyncClient, google: FakeGoogle, db: AsyncSession
 ) -> None:
