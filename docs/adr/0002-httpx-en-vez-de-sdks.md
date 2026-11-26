@@ -1,6 +1,6 @@
 # ADR-0002: `httpx` directo en vez de los SDKs de Google y Microsoft
 
-- Estado: Aceptado
+- Estado: Aceptado. La librería (`httpx`) fue reemplazada por `httpx2` en [ADR-0009](0009-httpx2-en-vez-de-httpx.md)
 - Fecha: 2026-11-25
 
 ## Contexto

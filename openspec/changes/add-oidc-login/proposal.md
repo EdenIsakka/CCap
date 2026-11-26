@@ -32,7 +32,7 @@ Ninguna: todavía no hay specs.
 ## Impacto
 
 - **Backend:** módulos nuevos de base de datos, autenticación y auditoría, y rutas `/auth/*`. Una dependencia que exige sesión para los endpoints protegidos.
-- **Dependencias nuevas** (se justifican en cada PR): `sqlalchemy[asyncio]`, `psycopg[binary]`, `alembic`, `authlib`, `itsdangerous`. Para tests: `pytest-asyncio`, `respx`, `testcontainers[postgres]`.
+- **Dependencias nuevas** (se justifican en cada PR): `sqlalchemy[asyncio]`, `psycopg[binary]`, `alembic`, `authlib`, `itsdangerous`, `httpx2`. Para tests: `pytest-asyncio`, `testcontainers[postgres]`.
 - **Configuración:** variables nuevas en `.env.example`: `ALLOWED_EMAILS`, `SESSION_SECRET` y `APP_URL`.
 - **Frontend:** pantalla de login y un proxy de Vite hacia la API, para que la cookie sea del mismo origen.
 - **Docs:** un ADR nuevo para las sesiones del lado del servidor y la identidad única; el STRIDE se actualiza (S-01, S-02 y una amenaza nueva por cuentas ajenas).

@@ -5,7 +5,10 @@ description = "Resumen de correos: API y worker"
 requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.20.1",
+    "authlib>=1.9.10",
     "fastapi>=0.165.0",
+    "httpx2>=2.16.2",
+    "itsdangerous>=2.2.0",
     "psycopg[binary]>=3.3.9",
     "pydantic-settings>=2.16.3",
     "sqlalchemy[asyncio]>=2.1.9",
@@ -27,7 +30,8 @@ target-version = "py313"
 select = ["E", "F", "W", "I", "UP", "B", "S", "ASYNC", "SIM", "RUF"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101"]
+# S105/S106: los tests usan credenciales falsas a propósito.
+"tests/**" = ["S101", "S105", "S106"]
 
 [tool.mypy]
 strict = true
@@ -42,7 +46,6 @@ asyncio_default_test_loop_scope = "session"
 
 [dependency-groups]
 dev = [
-    "httpx2>=2.16.2",
     "mypy>=2.4.1",
     "pre-commit>=4.7.0",
     "pytest>=9.2.0",
@@ -50,3 +53,9 @@ dev = [
     "ruff>=0.17.6",
     "testcontainers[postgres]>=4.15.0",
 ]
+
+# authlib no publica tipos (sin py.typed). Se usa solo en ccap/auth.py, donde los
+# valores que devuelve se anotan de forma explícita.
+[[tool.mypy.overrides]]
+module = ["authlib.*"]
+ignore_missing_imports = true
