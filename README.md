@@ -23,7 +23,8 @@ Requisitos: `uv`, `pnpm`, Docker y Ollama.
 ```
 cp .env.example .env             # y completar
 docker compose up -d db
-cd backend && uv sync && uv run pytest
+cd backend && uv sync && uv run alembic upgrade head
+uv run pytest                    # levanta su propio Postgres con Docker
 cd frontend && pnpm install && pnpm dev
 ```
 
