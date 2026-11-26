@@ -37,7 +37,7 @@ Cada grupo es un PR (GitHub Flow): rama desde `main`, TDD con tests AAA, CI en v
 
 - [ ] 4.1 Proxy de Vite de `/api` hacia `localhost:8000`; verificar que `pnpm dev` sirve `/api/health`
 - [ ] 4.2 Pantalla de login con "Entrar con Google" y "Entrar con Microsoft", y vista con el correo y "Cerrar sesión" cuando hay sesión; verificar con tests de Vitest que la vista cambia según la respuesta de `/api/auth/me`
-- [ ] 4.3 Mensaje "Esta cuenta no tiene acceso" cuando la URL trae `login=denied`; verificar con un test de Vitest
+- [ ] 4.3 Mensaje "Esta cuenta no tiene acceso" cuando la URL trae `login=denied`, y "Inicio de sesión cancelado" con `login=cancelled`; verificar con tests de Vitest
 - [ ] 4.4 Prueba manual de punta a punta en Chrome sobre `http://localhost:5173`; verificar que la cookie `Secure` se guarda, que el logout funciona y que tras cerrar sesión se vuelve a la pantalla de login
 
 ## Seguimiento
