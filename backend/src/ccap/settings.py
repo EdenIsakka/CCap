@@ -5,3 +5,4 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
 
     debug: bool = False
+    database_url: str

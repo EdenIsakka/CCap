@@ -21,7 +21,9 @@ Backend (desde `backend/`):
 uv sync
 uv run ruff check . && uv run ruff format --check .
 uv run mypy
-uv run pytest
+uv run pytest                   # levanta su propio Postgres con testcontainers (necesita Docker)
+uv run alembic upgrade head     # migraciones contra la base de docker compose
+uv run alembic revision --autogenerate -m "..."   # nueva migración tras cambiar models.py
 uv run uvicorn ccap.main:app --reload
 ```
 
