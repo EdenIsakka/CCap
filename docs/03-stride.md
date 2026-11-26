@@ -63,8 +63,9 @@ Estado de todas: **planeada**. Cada una se cierra con un test o una verificació
 
 | ID | Elemento | Amenaza | Mitigación |
 |---|---|---|---|
-| S-01 | Login / OAuth | CSRF en el callback, o código robado e inyectado | Parámetro `state` atado a la sesión, PKCE, validación de `nonce` y `aud` del ID token |
-| S-02 | Sesión | Robo de la cookie de sesión | Cookie `HttpOnly`, `Secure`, `SameSite=Lax`; ID de sesión nuevo al iniciar sesión; expiración corta |
+| S-01 | Login / OAuth | CSRF en el callback, o código robado e inyectado | `state` guardado en una cookie firmada de 10 minutos (`ccap_oauth`), atada al navegador que inició el login; PKCE S256; validación de firma, `iss`, `aud`, `exp` y `nonce` del ID token. Un callback inválido responde 400 sin crear sesión. Implementado en RF-01 (ADR-0008). |
+| S-02 | Sesión | Robo de la cookie de sesión | Cookie `HttpOnly`, `Secure`, `SameSite=Lax`; token aleatorio de 32 bytes del que la base guarda solo el SHA-256; token nuevo en cada login (el anterior se borra); vence a las 12 horas; el logout la borra en el servidor (ADR-0008). |
+| S-06 | Login | Una cuenta ajena de Google o Microsoft entra a la instalación | Solo entran los correos de `ALLOWED_EMAILS`; si está vacía, nadie entra. En Google el correo debe venir verificado (`email_verified`). Un rechazo queda en la auditoría sin la dirección de correo. La identidad se ata a emisor + sujeto, no al correo. |
 | S-03 | Correo | Un correo finge venir de tu jefe o tu banco. La IA lo clasifica como trabajo o finanzas y le da legitimidad a un phishing. | Mostrar siempre la dirección real del remitente. Guardar el resultado SPF/DKIM/DMARC del header `Authentication-Results` y marcar en la PWA los correos que fallan. |
 | S-04 | Push | Alguien registra su propia suscripción push | Solo una sesión autenticada registra suscripciones |
 | S-05 | Webhooks *(fase 2)* | Notificaciones falsas de Pub/Sub o Graph | Verificar el JWT OIDC de Pub/Sub (emisor, audiencia, firma). Validar `clientState` de Graph y el handshake con `validationToken`. |

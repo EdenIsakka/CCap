@@ -9,7 +9,7 @@ Cada decisión no obvia tiene su ADR en [docs/adr](adr/README.md).
 | API | FastAPI, Pydantic v2, `pydantic-settings` |
 | Base de datos | Postgres, SQLAlchemy 2 async, `psycopg` 3, Alembic |
 | Cola de tareas | Procrastinate (cola en Postgres) |
-| Correo | `httpx` contra Gmail API y Microsoft Graph, detrás de un `Protocol` `EmailProvider` |
+| Correo | `httpx2` contra Gmail API y Microsoft Graph, detrás de un `Protocol` `EmailProvider` |
 | Notificación de correo nuevo | Gmail: Pub/Sub push + respaldo por polling (`history.list`). Outlook: webhooks de Graph |
 | OAuth / login | `authlib`, login OIDC con Google o Microsoft, sesión en cookie `HttpOnly` |
 | IA | `Protocol` `LLMClient`: Ollama (por defecto) y SDK `anthropic` (opcional, se prueba con mocks) |
@@ -18,7 +18,7 @@ Cada decisión no obvia tiene su ADR en [docs/adr](adr/README.md).
 | Cifrado de tokens | AES-GCM (`cryptography`), versión de llave por fila |
 | Frontend | TypeScript, Vite, React, `vite-plugin-pwa` |
 | Web Push | `pywebpush` + VAPID |
-| Tests | `pytest`, `pytest-asyncio`, `respx`, `testcontainers`, `vitest` |
+| Tests | `pytest`, `pytest-asyncio`, `httpx2.MockTransport`, `testcontainers`, `vitest` |
 | CI | GitHub Actions (repo público): ruff, mypy, pytest, eslint, tsc, gitleaks, CodeQL, Dependabot |
 | Entorno local | `docker compose` (Postgres, API, worker) + `cloudflared` para HTTPS público |
 

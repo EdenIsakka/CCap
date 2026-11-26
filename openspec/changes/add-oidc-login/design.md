@@ -14,7 +14,7 @@ Restricciones que vienen del repo:
 
 **Objetivos**
 
-- Login de punta a punta con Google y Microsoft, probado sin red con `respx` y ID tokens firmados en el test.
+- Login de punta a punta con Google y Microsoft, probado sin red con `httpx2.MockTransport` y ID tokens firmados en el test.
 - Un patrón de base de datos (sesión async por petición, migraciones, tests con Postgres real) que RF-02 en adelante reutilicen.
 
 **No objetivos**
@@ -97,7 +97,7 @@ La PWA llama a `/api/*`, y Vite reenvía esas peticiones al backend en `localhos
 - [El correo de Microsoft no trae `email_verified`] → En cuentas personales, el correo es el nombre de inicio de sesión de la cuenta. Se acepta y queda anotado en el STRIDE.
 - [La cookie `Secure` en `http://localhost`] → Chrome y Firefox la aceptan porque localhost es un contexto seguro. Se verifica a mano en el PR 4.
 - [Los tests de base de datos dependen de Docker] → Docker ya está en el equipo local y en los runners `ubuntu-latest`. Si falta Docker, los tests fallan con un mensaje claro en vez de saltarse.
-- [`authlib` trae `httpx` como dependencia] → Esto resuelve la duda pendiente de ADR-0002: se usa `httpx`, y `httpx2` queda solo como dependencia de desarrollo del `TestClient`. Se revisa en el PR 2.
+- [`authlib` 1.9 usa `httpx2` sin declararlo, y `respx` no lo intercepta] → `httpx2` pasa a dependencia de runtime y los tests simulan HTTP con `httpx2.MockTransport` (ADR-0009).
 - [Las sesiones vencidas se acumulan en la tabla] → Se borran en cada login. No hace falta un job aparte para una sola persona.
 
 ## Plan de despliegue

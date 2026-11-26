@@ -1,10 +1,9 @@
 import uuid
 from enum import StrEnum
-from typing import Literal
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ccap.models import AuditLog
+from ccap.models import AuditLog, Provider
 
 
 class AuditEvent(StrEnum):
@@ -22,7 +21,7 @@ async def record_event(
     session: AsyncSession,
     event: AuditEvent,
     *,
-    provider: Literal["google", "microsoft"] | None = None,
+    provider: Provider | None = None,
     user_id: uuid.UUID | None = None,
     reason: AuditReason | None = None,
 ) -> None:

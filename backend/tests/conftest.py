@@ -3,6 +3,7 @@ import os
 from collections.abc import AsyncIterator, Mapping
 from pathlib import Path
 
+import httpx2
 import pytest
 from alembic import command
 from alembic.config import Config
@@ -13,8 +14,21 @@ from testcontainers.community.postgres import PostgresContainer
 _postgres = PostgresContainer("postgres:17-alpine", driver="psycopg")
 
 
+APP_URL = "http://localhost:5173"
+ALLOWED_EMAIL = "persona@example.com"
+
+
 def pytest_configure(config: pytest.Config) -> None:
-    # Antes de recolectar los tests: ccap.main lee DATABASE_URL al importarse.
+    # Antes de recolectar los tests: ccap.main lee la configuración al importarse.
+    # Valores de prueba; pisan los del .env local.
+    os.environ.update(
+        DEBUG="false",
+        APP_URL=APP_URL,
+        SESSION_SECRET="s" * 32,
+        ALLOWED_EMAILS=ALLOWED_EMAIL,
+        GOOGLE_CLIENT_ID="ccap-test-client",
+        GOOGLE_CLIENT_SECRET="ccap-test-secret",
+    )
     _postgres.start()
     # En Windows, "localhost" prueba IPv6 primero y la conexión async se cuelga.
     os.environ["DATABASE_URL"] = _postgres.get_connection_url().replace("localhost", "127.0.0.1")
@@ -50,3 +64,19 @@ async def db(engine: AsyncEngine) -> AsyncIterator[AsyncSession]:
         yield session
         await session.close()
         await transaction.rollback()
+
+
+@pytest.fixture
+async def client(db: AsyncSession) -> AsyncIterator[httpx2.AsyncClient]:
+    """Cliente HTTP contra la app, con la sesión de base de datos del test.
+
+    https: las cookies son Secure y el cliente no las devolvería por http.
+    """
+    from ccap.db import get_session
+    from ccap.main import app
+
+    app.dependency_overrides[get_session] = lambda: db
+    transport = httpx2.ASGITransport(app=app)
+    async with httpx2.AsyncClient(transport=transport, base_url="https://test") as client:
+        yield client
+    app.dependency_overrides.clear()

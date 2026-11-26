@@ -24,7 +24,7 @@ uv run mypy
 uv run pytest                   # levanta su propio Postgres con testcontainers (necesita Docker)
 uv run alembic upgrade head     # migraciones contra la base de docker compose
 uv run alembic revision --autogenerate -m "..."   # nueva migración tras cambiar models.py
-uv run uvicorn ccap.main:app --reload
+uv run uvicorn ccap.main:app --reload --loop asyncio:SelectorEventLoop   # psycopg async no corre en el loop por defecto de Windows
 ```
 
 Frontend (desde `frontend/`):
@@ -87,7 +87,7 @@ def test_marca_como_spam_correo_con_phishing():
 
 - Un comportamiento por test. El nombre del test dice qué comportamiento verifica.
 - **Unit tests vs. set de evaluación.** Los unit tests prueban la lógica con el `LLMClient` reemplazado por un fake (`clasificar(correo, llm=FakeLLM(...))`): son rápidos, deterministas y corren en CI. Si el modelo *acierta* (¿"Gana $1000 ya" es spam?) no se prueba en unit tests: se mide en el set de evaluación contra el modelo real, que corre aparte y no bloquea el CI.
-- En los tests, los puertos se reemplazan con fakes simples escritos a mano. Para HTTP se usa `respx`, no mocks del adaptador.
+- En los tests, los puertos se reemplazan con fakes simples escritos a mano. Para HTTP se usa `httpx2.MockTransport` con un handler que falla ante URLs inesperadas, no mocks del adaptador (ADR-0009).
 - Los datos de prueba son sintéticos (ver regla 7).
 
 ## Forma de trabajo

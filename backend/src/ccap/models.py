@@ -1,9 +1,11 @@
 import uuid
 from datetime import datetime
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Literal
 
 from sqlalchemy import DateTime, ForeignKey, LargeBinary, UniqueConstraint, func, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+Provider = Literal["google", "microsoft"]
 
 
 class Base(DeclarativeBase):
@@ -31,6 +33,7 @@ class UserIdentity(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), index=True
     )
+    provider: Mapped[str]
     issuer: Mapped[str]
     subject: Mapped[str]
     email: Mapped[str]
@@ -45,6 +48,10 @@ class LoginSession(Base):
     token_hash: Mapped[bytes] = mapped_column(LargeBinary(32), primary_key=True)
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    # La identidad con que se inició sesión: /me devuelve su correo y proveedor.
+    identity_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("user_identities.id", ondelete="CASCADE")
     )
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     expires_at: Mapped[datetime]
